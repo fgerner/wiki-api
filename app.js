@@ -53,6 +53,49 @@ app.route('/articles')
         })
     });
 
+app.route('/articles/:articleTitle')
+    .get(function (req, res) {
+        Article.findOne({title: req.params.articleTitle}, function (err, foundArticle) {
+            if (!err) {
+                res.send(foundArticle)
+            } else {
+                res.send('Not Found')
+            }
+        })
+    })
+    .put(function (req, res) {
+        Article.updateOne({title: req.params.articleTitle}, {
+            title: req.body.title,
+            content: req.body.content
+        }, {overwrite: true}, function (err) {
+            if (!err) {
+                res.send('Updated successfully')
+            } else {
+                res.send('Update unsuccessful');
+            }
+        })
+    })
+    .patch(function (req, res) {
+        Article.updateOne(
+            {title: req.params.articleTitle}, {$set: req.body}, function (err) {
+                if (!err) {
+                    res.send('Updated successfully');
+                } else {
+                    res.send('Update unsuccessful');
+                }
+            }
+        )
+    })
+    .delete(function (req, res) {
+        Article.deleteOne({title: req.params.articleTitle}, function (err) {
+            if (!err) {
+                res.send('Deleted successfully')
+            } else {
+                res.send('Delete Failed')
+            }
+        })
+    });
+
 app.listen(port, function () {
     console.log(`server listening on ${port}`);
 })
